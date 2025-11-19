@@ -1,5 +1,5 @@
+use openvm_circuit::circuit_derive::AlignedBorrow;
 use stark_backend_v2::DIGEST_SIZE;
-use stark_recursion_circuit_derive::AlignedBorrow;
 
 pub const VERIFIER_PVS_AIR_ID: usize = 0;
 
