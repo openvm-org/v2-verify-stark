@@ -1,0 +1,77 @@
+[workspace.package]
+version = "2.0.0-alpha"
+edition = "2021"
+rust-version = "1.83"
+authors = ["OpenVM contributors"]
+homepage = "https://openvm.dev"
+repository = "https://github.com/openvm-org/"
+license = "MIT OR Apache-2.0"
+
+[workspace]
+members = [
+    "crates/verify-stark",
+]
+resolver = "2"
+
+# Fastest runtime configuration
+[profile.release]
+opt-level = 3
+lto = "thin"
+debug = "line-tables-only"
+strip = true
+panic = "unwind"
+codegen-units = 16
+
+[profile.profiling]
+inherits = "release"
+debug = 2
+strip = false
+
+# Make sure debug symbols are in the bench profile for flamegraphs
+[profile.bench]
+inherits = "profiling"
+
+# This will compile slowly
+[profile.maxperf]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+
+[profile.dev]
+opt-level = 1
+debug = 2
+
+[workspace.dependencies]
+# STARK backend
+stark-backend-v2 = { git = "https://github.com/openvm-org/stark-backend.git", branch = "develop-v2", default-features = false }
+codec-derive = { git = "https://github.com/openvm-org/stark-backend.git", branch = "develop-v2", default-features = false }
+# OpenVM
+openvm-circuit = { git = "https://github.com/openvm-org/openvm.git", branch = "v2-verify-stark", default-features = false }
+
+# Plonky3
+p3-field = { git = "https://github.com/Plonky3/Plonky3.git", rev = "539bbc84085efb609f4f62cb03cf49588388abdb", default-features = false }
+
+itertools = "0.14"
+rayon = "1.10"
+hex-literal = "1.0.0"
+hex = { version = "0.4.3", default-features = false }
+num-bigint = { version = "0.4.6", default-features = false }
+rand = "0.9"
+bitcode = { version = "0.6.5", default-features = false, features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_with = "3.11.0"
+serde_json = "1.0"
+derive-new = "0.7.0"
+tracing = "0.1.41"
+getset = "0.1.6"
+cfg-if = "1.0"
+thiserror = "2.0"
+eyre = "0.6"
+test-case = "3.3"
+strum_macros = "0.26.4"
+strum = { version = "0.26.3", features = ["derive"] }
+derivative = "2.2.0"
+zstd = { version = "0.13", default-features = false }
+metrics = "0.23.0"
+
+clap = "4.5.23"
