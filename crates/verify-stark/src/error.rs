@@ -1,5 +1,5 @@
 use openvm_circuit::system::memory::merkle::public_values::UserPublicValuesProofError;
-use stark_backend_v2::{Digest, F, verifier::VerifierError};
+use stark_backend_v2::{verifier::VerifierError, Digest, F};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -12,16 +12,24 @@ pub enum VerifyStarkError {
     UserPvCommitMismatch { expected: Digest, actual: Digest },
     #[error("Invalid app exe commit: expected {expected:?}, actual {actual:?}")]
     AppExeCommitMismatch { expected: Digest, actual: Digest },
-    #[error("Invalid leaf commit: expected {expected:?}, actual {actual:?}")]
-    LeafCommitMismatch { expected: Digest, actual: Digest },
-    #[error("Invalid internal for leaf commit: expected {expected:?}, actual {actual:?}")]
-    InternalForLeafCommitMismatch { expected: Digest, actual: Digest },
-    #[error("Invalid internal recursive commit: expected {expected:?}, actual {actual:?}")]
-    InternalRecursiveMismatch { expected: Digest, actual: Digest },
+    #[error("Invalid app vk commit: expected {expected:?}, actual {actual:?}")]
+    AppVkCommitMismatch { expected: Digest, actual: Digest },
+    #[error("Invalid leaf vk commit: expected {expected:?}, actual {actual:?}")]
+    LeafVkCommitMismatch { expected: Digest, actual: Digest },
+    #[error("Invalid internal for leaf vk commit: expected {expected:?}, actual {actual:?}")]
+    InternalForLeafVkCommitMismatch { expected: Digest, actual: Digest },
+    #[error("Invalid internal recursive vk commit: expected {expected:?}, actual {actual:?}")]
+    InternalRecursiveVkCommitMismatch { expected: Digest, actual: Digest },
+    #[error("Invalid compression commit: expected {expected:?}, actual {actual:?}")]
+    CompressionCommitMismatch { expected: Vec<F>, actual: Vec<F> },
+    #[error("Compression commit should not be defined if not enabled, actual {actual:?}")]
+    CompressionCommitDefined { actual: Vec<F> },
     #[error("Program execution did not terminate successfully, exit_code: {0}")]
     ExecutionUnsuccessful(F),
-    #[error("Invalid internal flag {0}, should be either 2")]
+    #[error("Invalid internal flag {0}, should be 2")]
     InvalidInternalFlag(F),
+    #[error("Invalid recursion flag {0}, should be 2")]
+    InvalidRecursionFlag(F),
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
     #[error("Other error: {0}")]

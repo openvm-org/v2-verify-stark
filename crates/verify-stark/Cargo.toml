@@ -8,16 +8,15 @@ description = "Lightweight crate to verify a v2 STARK proof"
 [dependencies]
 openvm-circuit = { workspace = true }
 stark-backend-v2 = { workspace = true }
-
+p3-field = { workspace = true }
 bitcode = { workspace = true }
 eyre = { workspace = true }
-p3-field = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
 zstd = { workspace = true }
 
 [dev-dependencies]
-clap = { workspace = true, features = ["derive"] }
+clap = { version = "4.5.23", features = ["derive"] }
 
 [features]
 default = ["parallel"]
