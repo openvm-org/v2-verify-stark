@@ -6,7 +6,7 @@ use std::{
 use eyre::{Report, Result};
 use openvm_circuit::system::memory::dimensions::MemoryDimensions;
 use serde::{Deserialize, Serialize};
-use stark_backend_v2::{Digest, keygen::types::MultiStarkVerifyingKeyV2};
+use stark_backend_v2::{keygen::types::MultiStarkVerifyingKeyV2, Digest};
 
 /// Verifying key and artifacts used to verify a STARK proof for a fixed VM and executable
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -24,15 +24,22 @@ pub struct VerificationBaseline {
     pub app_exe_commit: Digest,
     /// VM memory metadata used to verify the user public values merkle proof
     pub memory_dimensions: MemoryDimensions,
-    /// Cached trace commit of the leaf verifier circuit's SymbolicExpresionAir, which is
+    /// Cached trace commit of the leaf verifier circuit's SymbolicExpressionAir, which is
     /// derived from the app_vk
-    pub leaf_commit: Digest,
-    /// Cached trace commit of the internal-for-leaf verifier circuit's SymbolicExpresionAir,
-    /// which derived from the leaf_vk
-    pub internal_for_leaf_commit: Digest,
-    /// Cached trace commit of the internal-recursive verifier circuit's SymbolicExpresionAir,
-    /// which derived from the internal_for_leaf_vk
-    pub internal_recursive_commit: Digest,
+    pub app_vk_commit: Digest,
+    /// Cached trace commit of the internal-for-leaf verifier circuit's SymbolicExpressionAir,
+    /// which is derived from the leaf_vk
+    pub leaf_vk_commit: Digest,
+    /// Cached trace commit of the first (i.e. index 0) internal-recursive layer verifier
+    /// circuit's SymbolicExpressionAir, which is derived from the internal_for_leaf_vk
+    pub internal_for_leaf_vk_commit: Digest,
+    /// Cached trace commit of each subsequent (i.e. index > 0) internal-recursive layer
+    /// verifier's SymbolicExpressionAir, which is derived from the internal_recursive_vk
+    pub internal_recursive_vk_commit: Digest,
+    /// In-circuit generated commit of the internal-recursive layer's DAG if the compression
+    /// layer is enabled. If so, it should be match the public values of DagCommitAir, which
+    /// should be the last AIR in the compression layer circuit.
+    pub compression_commit: Option<Digest>,
 }
 
 pub fn read_vk_from_file<P: AsRef<Path>>(path: P) -> Result<NonRootStarkVerifyingKey> {

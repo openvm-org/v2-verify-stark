@@ -2,17 +2,17 @@ use std::borrow::Borrow;
 
 use eyre::Result;
 use openvm_circuit::{
-    arch::{ExitCode, hasher::poseidon2::vm_poseidon2_hasher},
+    arch::{hasher::poseidon2::vm_poseidon2_hasher, ExitCode},
     system::{
         memory::merkle::public_values::UserPublicValuesProof, program::trace::compute_exe_commit,
     },
 };
 use p3_field::{FieldAlgebra, PrimeField32};
 use stark_backend_v2::{
-    BabyBearPoseidon2CpuEngineV2, DIGEST_SIZE, F, StarkEngineV2,
     codec::{Decode, Encode},
     poseidon2::sponge::DuplexSponge,
     proof::Proof,
+    BabyBearPoseidon2CpuEngineV2, StarkEngineV2, DIGEST_SIZE, F,
 };
 
 use crate::{
@@ -49,7 +49,7 @@ pub fn verify_vm_stark_proof_decoded(
     proof: &NonRootStarkProof,
 ) -> Result<(), VerifyStarkError> {
     // Verify the STARK proof.
-    let engine = BabyBearPoseidon2CpuEngineV2::<DuplexSponge>::new(vk.mvk.inner.params);
+    let engine = BabyBearPoseidon2CpuEngineV2::<DuplexSponge>::new(vk.mvk.inner.params.clone());
     engine.verify(&vk.mvk, &proof.inner)?;
 
     let &NonRootVerifierPvs::<F> {
@@ -61,9 +61,11 @@ pub fn verify_vm_stark_proof_decoded(
         initial_root,
         final_root,
         internal_flag,
-        leaf_commit,
-        internal_for_leaf_commit,
-        internal_recursive_commit,
+        app_vk_commit,
+        leaf_vk_commit,
+        internal_for_leaf_vk_commit,
+        recursion_flag,
+        internal_recursive_vk_commit,
         ..
     } = proof.inner.public_values[VERIFIER_PVS_AIR_ID]
         .as_slice()
@@ -98,34 +100,67 @@ pub fn verify_vm_stark_proof_decoded(
         return Err(VerifyStarkError::ExecutionUnsuccessful(exit_code));
     }
 
-    // Check that the final proof is computed by the internal recursive prover, i.e.
-    // that internal_flag is 2.
+    // Check that the final proof is computed by the internal recursive (or compression)
+    // prover, i.e. that internal_flag is 2.
     if internal_flag != F::TWO {
         return Err(VerifyStarkError::InvalidInternalFlag(internal_flag));
     }
 
-    // Check leaf_commit against expected_commits.
-    if leaf_commit != vk.baseline.leaf_commit {
-        return Err(VerifyStarkError::LeafCommitMismatch {
-            expected: vk.baseline.leaf_commit,
-            actual: leaf_commit,
+    // Check app_vk_commit against expected_commits.
+    if app_vk_commit != vk.baseline.app_vk_commit {
+        return Err(VerifyStarkError::AppVkCommitMismatch {
+            expected: vk.baseline.app_vk_commit,
+            actual: app_vk_commit,
         });
     }
 
-    // Check internal_for_leaf_commit against expected_commits.
-    if internal_for_leaf_commit != vk.baseline.internal_for_leaf_commit {
-        return Err(VerifyStarkError::InternalForLeafCommitMismatch {
-            expected: vk.baseline.internal_for_leaf_commit,
-            actual: internal_for_leaf_commit,
+    // Check leaf_vk_commit against expected_commits.
+    if leaf_vk_commit != vk.baseline.leaf_vk_commit {
+        return Err(VerifyStarkError::LeafVkCommitMismatch {
+            expected: vk.baseline.leaf_vk_commit,
+            actual: leaf_vk_commit,
         });
     }
 
-    // Check internal_for_leaf_commit against expected_commits.
-    if internal_recursive_commit != vk.baseline.internal_recursive_commit {
-        return Err(VerifyStarkError::InternalRecursiveMismatch {
-            expected: vk.baseline.internal_recursive_commit,
-            actual: internal_recursive_commit,
+    // Check internal_for_leaf_vk_commit against expected_commits.
+    if internal_for_leaf_vk_commit != vk.baseline.internal_for_leaf_vk_commit {
+        return Err(VerifyStarkError::InternalForLeafVkCommitMismatch {
+            expected: vk.baseline.internal_for_leaf_vk_commit,
+            actual: internal_for_leaf_vk_commit,
         });
     }
+
+    // Check that recursion_flag is 2, i.e. that the penultimate layer is internal
+    // recursive.
+    if recursion_flag != F::TWO {
+        return Err(VerifyStarkError::InvalidRecursionFlag(recursion_flag));
+    }
+
+    // Check internal_recursive_vk_commit against expected_commits.
+    if internal_recursive_vk_commit != vk.baseline.internal_recursive_vk_commit {
+        return Err(VerifyStarkError::InternalRecursiveVkCommitMismatch {
+            expected: vk.baseline.internal_recursive_vk_commit,
+            actual: internal_recursive_vk_commit,
+        });
+    }
+
+    // Check that the public values of the last AIR matches up with the expected
+    // compression_commit if compression is enabled, else ensure the last AIR has
+    // no public values.
+    let compression_commit_pvs = proof.inner.public_values.last().unwrap().clone();
+    if let Some(expected_compression_commit) = vk.baseline.compression_commit.as_ref() {
+        let expected_expression_commit = expected_compression_commit.to_vec();
+        if compression_commit_pvs != expected_expression_commit {
+            return Err(VerifyStarkError::CompressionCommitMismatch {
+                expected: expected_expression_commit,
+                actual: compression_commit_pvs,
+            });
+        }
+    } else if !compression_commit_pvs.is_empty() {
+        return Err(VerifyStarkError::CompressionCommitDefined {
+            actual: compression_commit_pvs,
+        });
+    }
+
     Ok(())
 }

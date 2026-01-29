@@ -382,6 +382,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
+name = "bytesize"
+version = "2.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bd91ee7b2422bcb158d90ef4d14f75ef67f340943fc4149891dcce8f8b972a3"
+
+[[package]]
 name = "cc"
 version = "1.2.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -442,7 +448,7 @@ checksum = "a1d728cc89cf3aee9ff92b05e62b19ee65a02b5702cff7d5a377e32c6ae29d8d"
 [[package]]
 name = "codec-derive"
 version = "2.0.0-alpha"
-source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#a4501cbb563ab2ccf2c25dc8f483bdd4d20fedcc"
+source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#77a0fb208e42ec4ac7fa843691c20ea8aab6e26e"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -1248,10 +1254,11 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 [[package]]
 name = "openvm-circuit"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "abi_stable",
  "backtrace",
+ "bytesize",
  "cfg-if",
  "dashmap",
  "derivative",
@@ -1284,7 +1291,7 @@ dependencies = [
 [[package]]
 name = "openvm-circuit-derive"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "itertools 0.14.0",
  "proc-macro2",
@@ -1295,7 +1302,7 @@ dependencies = [
 [[package]]
 name = "openvm-circuit-primitives"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "derive-new 0.6.0",
  "itertools 0.14.0",
@@ -1311,7 +1318,7 @@ dependencies = [
 [[package]]
 name = "openvm-circuit-primitives-derive"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "itertools 0.14.0",
  "quote",
@@ -1321,7 +1328,7 @@ dependencies = [
 [[package]]
 name = "openvm-cuda-builder"
 version = "2.0.0-alpha"
-source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#a4501cbb563ab2ccf2c25dc8f483bdd4d20fedcc"
+source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#77a0fb208e42ec4ac7fa843691c20ea8aab6e26e"
 dependencies = [
  "cc",
  "glob",
@@ -1330,7 +1337,7 @@ dependencies = [
 [[package]]
 name = "openvm-instructions"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "backtrace",
  "derive-new 0.6.0",
@@ -1347,7 +1354,7 @@ dependencies = [
 [[package]]
 name = "openvm-instructions-derive"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "quote",
  "syn 2.0.110",
@@ -1356,7 +1363,7 @@ dependencies = [
 [[package]]
 name = "openvm-poseidon2-air"
 version = "1.4.1"
-source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#c0642aa78160b54e278cfa95f30a536d794b08bd"
+source = "git+https://github.com/openvm-org/openvm.git?branch=v2-verify-stark#2a8199e9b647352f0e238e669c4db12e15d41eaa"
 dependencies = [
  "derivative",
  "lazy_static",
@@ -1374,7 +1381,7 @@ dependencies = [
 [[package]]
 name = "openvm-stark-backend"
 version = "2.0.0-alpha"
-source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#a4501cbb563ab2ccf2c25dc8f483bdd4d20fedcc"
+source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#77a0fb208e42ec4ac7fa843691c20ea8aab6e26e"
 dependencies = [
  "bitcode",
  "cfg-if",
@@ -1401,7 +1408,7 @@ dependencies = [
 [[package]]
 name = "openvm-stark-sdk"
 version = "2.0.0-alpha"
-source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#a4501cbb563ab2ccf2c25dc8f483bdd4d20fedcc"
+source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#77a0fb208e42ec4ac7fa843691c20ea8aab6e26e"
 dependencies = [
  "dashmap",
  "derivative",
@@ -2243,8 +2250,9 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 [[package]]
 name = "stark-backend-v2"
 version = "2.0.0-alpha"
-source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#a4501cbb563ab2ccf2c25dc8f483bdd4d20fedcc"
+source = "git+https://github.com/openvm-org/stark-backend.git?branch=develop-v2#77a0fb208e42ec4ac7fa843691c20ea8aab6e26e"
 dependencies = [
+ "bitcode",
  "cfg-if",
  "codec-derive",
  "derivative",
