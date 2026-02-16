@@ -16,6 +16,7 @@ thiserror = { workspace = true }
 zstd = { workspace = true }
 
 [dev-dependencies]
+base64 = "0.22"
 clap = { version = "4.5.23", features = ["derive"] }
 
 [features]

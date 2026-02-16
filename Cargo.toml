@@ -46,10 +46,10 @@ debug = 2
 stark-backend-v2 = { git = "https://github.com/openvm-org/stark-backend.git", branch = "develop-v2", default-features = false }
 
 # OpenVM
-openvm-circuit = { git = "https://github.com/openvm-org/openvm.git", branch = "v2-verify-stark", default-features = false }
+openvm-circuit = { git = "https://github.com/openvm-org/openvm.git", branch = "v2-verify-stark-3", default-features = false }
 
 # Plonky3
-p3-field = { git = "https://github.com/Plonky3/Plonky3.git", rev = "539bbc84085efb609f4f62cb03cf49588388abdb", default-features = false }
+p3-field = { version = "0.4.1", default-features = false }
 
 # Other
 bitcode = { version = "0.6.5", default-features = false, features = ["serde"] }
